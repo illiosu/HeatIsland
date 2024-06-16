@@ -1,0 +1,19 @@
+{
+  "name": "gismap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "parcel index.html -p 8084"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "heatmap.js": "^2.0.5",
+    "jquery": "^3.7.1",
+    "leaflet": "^1.9.4",
+    "leaflet-minimap": "^3.6.1",
+    "parcel-bundler": "^1.12.5"
+  }
+}

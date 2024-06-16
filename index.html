@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>基于webgis的温度监测预警系统</title>
+  <link rel="shortcut icon" href="./assets/icon/aoo0w-5w4vb-001.ico" type="image/x-icon" />
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+  <link rel="stylesheet" href="./style/base.css" />
+  <link rel="stylesheet" href="./style/echarts.css" />
+</head>
+
+<body>
+  <div class="login-content">
+    <div class="login-box">
+      <div class="input-box">
+        <div class="input">
+          <span>账号：</span>
+          <span><input type="text" value="admin" class="username" /></span>
+        </div>
+        <div class="input">
+          <span>密码：</span>
+          <span><input type="password" class="password" value="123456" /></span>
+        </div>
+        <div class="button-box">
+          <button class="login">登录</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-header">基于GIS的温度预警监测系统</div>
+  <div id="map-container"></div>
+  <div class="move-coordinate" id="coordinate"></div>
+  <div class="nav-list">
+    <div class="title">功能列表</div>
+    <ul id="nav_list">
+      <li data_url="https://www.gscloud.cn/search">地理空间数据云</li>
+      <li data_tool="heatMap">热力图分析</li>
+      <li data_tool="echarts" class="echarts-show">图表分析</li>
+      <li data_tool="timeselector">温度差值检测</li>
+      <li data_tool="timeselector">温度预警</li>
+      <li data_tool="temperatureInversion" id="temperature">城市地表温度反演</li>
+
+
+    </ul>
+  </div>
+  <div class="waring-icon">
+    <span class="waring-red">报警:</span>
+    <span class="waring-blue">正常:</span>
+  </div>
+  <div class="time-selector">
+    <!-- <input type="month" id="start" name="start" min="2015-03" value="2018-05" /> -->
+    <!-- <form> <label for="year">请选择年份：</label> <input id="year" type="number"name="year" min="2015" max="2021" /> </form> -->
+    <!-- <form> <label for="start">请选择年份：</label> <input id="start" type="month"name="start" min="2015-03" value="2018-05" /> </form> -->
+    <form style="float:left">
+      <label for="year">请选择年份:</label>
+      <select id="year" name="year" style="margin-right: 10px;">
+        <option value="2014">2014</option>
+        <option value="2017">2017</option>
+        <option value="2018">2018</option>
+        <option value="2019">2019</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+      </select>
+    </form>
+
+    <label for="year">请选择预警温度值:</label>
+    <input id="warningNumber" style="width: 40px" type="number" value="30" />
+    <button id="warningButton">预警</button>
+  </div>
+  <div class="heat-map-tool">
+    <div class="title">热力图分析</div>
+    <label for="year">
+      <span>年份：</span>
+      <select id="year">
+        <option value="2018">2018年</option>
+        <option value="2019">2019年</option>
+        <option value="2020">2020年</option>
+        <option value="2021">2021年</option>
+      </select>
+    </label>
+    <label for="type">
+      <span>类型：</span>
+      <select id="type">
+        <option value="min">最低温度</option>
+        <option value="max">最高温度</option>
+        <option value="avg">平均温度</option>
+      </select>
+    </label>
+    <button class="submit" id="submit">生成热力图</button>
+    <button class="clear" id="clear">清除热力图</button>
+  </div>
+
+  <div class="main-content">
+    <div class="header-box">
+      <div>合肥温度分析系统</div>
+      <div class="icon"></div>
+    </div>
+    <div class="main-box">
+      <div class="left-box">
+        <div class="left-top-box">
+          <div class="title-box">
+            <span class="text-box">热岛分级占比</span>
+            <span class="select-box">
+              <select id="sid1">
+                <option>2014</option>
+                <option>2017</option>
+                <option>2018</option>
+                <option>2019</option>
+                <option>2020</option>
+                <option>2021</option>
+              </select>
+            </span>
+            <span class="query-button"><button class="button button1">查询</button></span>
+          </div>
+          <div class="echart-box" id="echart"></div>
+        </div>
+        <div class="left-bottom-box">
+          <div class="title-box">
+            <span class="text-box">各行政区占比</span>
+            <span class="select-box">
+              <select id="sid3">
+                <option>强冷岛区</option>
+                <option>冷岛区</option>
+                <option>正常区</option>
+                <option>热岛区</option>
+                <option>强热岛区</option>
+              </select>
+            </span>
+            <span class="query-button"><button class="button button3">查询</button></span>
+          </div>
+          <div class="echart-box" id="echart2"></div>
+        </div>
+      </div>
+      <div class="right-box">
+        <div class="right-top-box">
+          <div class="title-box">
+            <span class="text-box">合肥逐地区温度一览</span>
+            <span class="select-box">
+              <select id="sid2">
+                <option>2014</option>
+                <option>2017</option>
+                <option>2018</option>
+                <option>2019</option>
+                <option>2020</option>
+                <option>2021</option>
+              </select>
+            </span>
+            <span class="query-button"><button class="button button2">查询</button></span>
+          </div>
+          <div class="echart-box" id="echart3"></div>
+        </div>
+        <div class="right-bottom-box">
+          <div class="title-box">
+            <span class="text-box">各热岛逐年占比</span>
+            <span class="select-box">
+              <select id="sid4">
+                <option>强冷岛区</option>
+                <option>冷岛区</option>
+                <option>正常区</option>
+                <option>热岛区</option>
+                <option>强热岛区</option>
+              </select>
+            </span>
+            <span class="query-button"><button class="button button4">查询</button></span>
+          </div>
+          <div class="echart-box" id="echart4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="temperature-inversion" style="position: absolute;left: 200px;top: 100px;display: none;height: 150px;">
+    <div class="title">城市地表温度反演</div>
+    <label style="margin: 10px;">
+      <span>类型：</span>
+      <select id="typeSelect">
+        <option value="br">br</option>
+        <option value="ndvi">ndvi</option>
+        <option value="srr">srr</option>
+        <option value="dem">dem</option>
+        <option value="veg">veg</option>
+      </select>
+    </label>
+
+    <input type="file" name="file" id="inputfile" style="margin-bottom: 5px;" />
+    <button class="submit" id="submitfile">生成</button>
+  </div>
+  <script src="./main.js">
+
+
+  </script>
+  <script src="./js/initEcharts.js"></script>
+  <!-- <script src="localhost:9090/testPython/readfile"></script> -->
+</body>
+
+</html>
